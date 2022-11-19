@@ -1,12 +1,20 @@
 package org.mithwick.covid19.client;
 
-import org.mithwick.covid19.client.models.InputChoice;
+import org.mithwick.covid19.client.models.request.InputChoice;
+import org.mithwick.covid19.client.services.Covid19APIClientService;
 import org.mithwick.covid19.client.validations.InputValidator;
 
+import java.net.http.HttpClient;
+import java.time.Duration;
 import java.util.Scanner;
 
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
+
+    private static final HttpClient httpClient = HttpClient.newBuilder()
+            .version(HttpClient.Version.HTTP_1_1)
+            .connectTimeout(Duration.ofSeconds(60))
+            .build();
 
     public static void main(String[] args) {
         System.out.println("Welcome to Covid-19-API Java Client");
@@ -59,6 +67,9 @@ public class Main {
             System.out.println("Invalid Country Name. Please try again");
             return;
         }
+
+        Covid19APIClientService covid19APIClientService = new Covid19APIClientService(httpClient, country);
+        covid19APIClientService.displayInformation();
 
     }
 
