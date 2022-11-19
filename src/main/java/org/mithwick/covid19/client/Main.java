@@ -16,6 +16,7 @@ public class Main {
 
             handleExit(mainChoice);
             String country = getCountryName(mainChoice);
+            System.out.println(country);
         }
     }
 
@@ -25,7 +26,7 @@ public class Main {
     }
 
     private static InputChoice getMainMenuUserChoice() {
-        System.out.print("Please enter your choice:");
+        System.out.print("Please enter your choice: ");
 
         String input = scanner.nextLine();
         try {
@@ -39,17 +40,12 @@ public class Main {
     }
 
     private static String getCountryName(InputChoice choice) {
-        String country = null;
-
-        if (InputChoice.ENTER_COUNTRY_NAME.equals(choice)) {
-            return country;
+        if (!InputChoice.ENTER_COUNTRY_NAME.equals(choice)) {
+            return null;
         }
 
-        System.out.print("Please enter ISO 3166-1 alpha-2 compliant country name:");
-        country = scanner.nextLine();
-
-        // todo - validation
-        return country;
+        System.out.print("Please enter ISO 3166-1 alpha-2 compliant country name: ");
+        return scanner.nextLine();
     }
 
     private static void handleExit(InputChoice choice) {
