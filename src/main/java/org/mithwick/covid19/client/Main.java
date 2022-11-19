@@ -15,8 +15,9 @@ public class Main {
             InputChoice mainChoice = getMainMenuUserChoice();
 
             handleExit(mainChoice);
+
             String country = getCountryName(mainChoice);
-            System.out.println(country);
+            displayCovidInformation(country);
         }
     }
 
@@ -46,6 +47,12 @@ public class Main {
 
         System.out.print("Please enter ISO 3166-1 alpha-2 compliant country name: ");
         return scanner.nextLine();
+    }
+
+    private static void displayCovidInformation(String country) {
+        if (country == null) {
+            return;
+        }
     }
 
     private static void handleExit(InputChoice choice) {
