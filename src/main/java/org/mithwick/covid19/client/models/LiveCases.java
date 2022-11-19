@@ -1,33 +1,33 @@
 package org.mithwick.covid19.client.models;
 
 public class LiveCases {
-    private Long confirmed;
-    private Long recovered;
-    private Long deaths;
+    private long confirmed;
+    private long recovered;
+    private long deaths;
 
     private String updated;
 
-    public Long getConfirmed() {
+    public long getConfirmed() {
         return confirmed;
     }
 
-    public void setConfirmed(Long confirmed) {
+    public void setConfirmed(long confirmed) {
         this.confirmed = confirmed;
     }
 
-    public Long getRecovered() {
+    public long getRecovered() {
         return recovered;
     }
 
-    public void setRecovered(Long recovered) {
+    public void setRecovered(long recovered) {
         this.recovered = recovered;
     }
 
-    public Long getDeaths() {
+    public long getDeaths() {
         return deaths;
     }
 
-    public void setDeaths(Long deaths) {
+    public void setDeaths(long deaths) {
         this.deaths = deaths;
     }
 

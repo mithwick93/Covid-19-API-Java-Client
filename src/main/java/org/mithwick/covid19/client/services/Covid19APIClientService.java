@@ -3,42 +3,41 @@ package org.mithwick.covid19.client.services;
 import org.mithwick.covid19.client.models.HistoricalCases;
 import org.mithwick.covid19.client.models.LiveCases;
 import org.mithwick.covid19.client.models.Vaccines;
-import org.mithwick.covid19.client.models.response.HistoricalCasesResponse;
-import org.mithwick.covid19.client.models.response.LiveCasesResponse;
-import org.mithwick.covid19.client.models.response.VaccinesResponse;
-import org.mithwick.covid19.client.utils.HTTPClientUtil;
+import org.mithwick.covid19.client.models.response.Covid19APIResponse;
+import org.mithwick.covid19.client.services.utils.Covid19APIUtil;
 
 import java.net.http.HttpClient;
 
 public class Covid19APIClientService {
 
     private static final String NA = "N/A";
-    private final HTTPClientUtil httpClientUtil;
+    private final Covid19APIUtil covid19APIUtil;
     private final String country;
 
     public Covid19APIClientService(HttpClient httpClient, String country) {
-        this.httpClientUtil = new HTTPClientUtil(httpClient, country);
+        this.covid19APIUtil = new Covid19APIUtil(httpClient, country);
         this.country = country;
     }
 
     public void displayInformation() {
-        LiveCasesResponse currentLiveCasesResponseInformation = httpClientUtil.getCurrentInformation();
-        VaccinesResponse vaccinesResponse = httpClientUtil.getVaccineInformation();
-        HistoricalCasesResponse historicalCasesResponse = httpClientUtil.getHistoricalInformation();
+        Covid19APIResponse<LiveCases> liveCasesResponse = covid19APIUtil.doGetRequest(covid19APIUtil.getCurrentInformationURI(), LiveCases.class);
+        Covid19APIResponse<Vaccines> vaccinesResponse = covid19APIUtil.doGetRequest(covid19APIUtil.getVaccineInformationURI(), Vaccines.class);
+        Covid19APIResponse<HistoricalCases> historicalCasesResponse = covid19APIUtil.doGetRequest(covid19APIUtil.getHistoricalInformationURI(), HistoricalCases.class);
 
-        System.out.println("Covid-19 Information of ".concat(country));
-        displayLiveCases(currentLiveCasesResponseInformation);
+        System.out.println("Displaying Covid-19 Information of ".concat(country));
+
+        displayLiveCases(liveCasesResponse);
         displayVaccines(vaccinesResponse);
-        displayHistorical(currentLiveCasesResponseInformation, historicalCasesResponse);
+        displayHistorical(liveCasesResponse, historicalCasesResponse);
     }
 
-    public void displayLiveCases(LiveCasesResponse currentLiveCasesResponseInformation) {
+    private void displayLiveCases(Covid19APIResponse<LiveCases> liveCasesResponse) {
         String confirmed = NA;
         String recovered = NA;
         String deaths = NA;
 
-        if (currentLiveCasesResponseInformation != null) {
-            LiveCases liveCases = currentLiveCasesResponseInformation.getAll();
+        if (liveCasesResponse != null && liveCasesResponse.getData() != null) {
+            LiveCases liveCases = liveCasesResponse.getData();
 
             confirmed = String.format("%,d", liveCases.getConfirmed());
             recovered = String.format("%,d", liveCases.getRecovered());
@@ -50,13 +49,13 @@ public class Covid19APIClientService {
         System.out.println("\tDeaths: ".concat(deaths));
     }
 
-    public void displayVaccines(VaccinesResponse vaccinesResponse) {
-        if (vaccinesResponse != null && vaccinesResponse.getAll() != null) {
-            Vaccines vaccines = vaccinesResponse.getAll();
-            Long population = vaccines.getPopulation();
-            Long peopleVaccinated = vaccines.getPeopleVaccinated();
+    private void displayVaccines(Covid19APIResponse<Vaccines> vaccinesResponse) {
+        if (vaccinesResponse != null && vaccinesResponse.getData() != null) {
+            Vaccines vaccines = vaccinesResponse.getData();
+            long population = vaccines.getPopulation();
+            long peopleVaccinated = vaccines.getPeopleVaccinated();
 
-            if (population != 0 && peopleVaccinated != 0) {
+            if (population != 0) {
                 Double percentage = (peopleVaccinated / population) * 100.0;
                 String vaccinated = String.format("%,.2f", percentage);
 
@@ -68,12 +67,12 @@ public class Covid19APIClientService {
         System.out.println("\tVaccinated: ".concat(NA));
     }
 
-    public void displayHistorical(LiveCasesResponse currentLiveCasesResponseInformation, HistoricalCasesResponse historicalCasesResponse) {
+    private void displayHistorical(Covid19APIResponse<LiveCases> liveCasesResponse, Covid19APIResponse<HistoricalCases> historicalCasesResponse) {
         String newConfirmed = NA;
 
-        if (currentLiveCasesResponseInformation != null && historicalCasesResponse != null) {
-            LiveCases liveCases = currentLiveCasesResponseInformation.getAll();
-            HistoricalCases historicalCases = historicalCasesResponse.getAll();
+        if (liveCasesResponse != null && liveCasesResponse.getData() != null && historicalCasesResponse != null && historicalCasesResponse.getData() != null) {
+            LiveCases liveCases = liveCasesResponse.getData();
+            HistoricalCases historicalCases = historicalCasesResponse.getData();
 
             Long newConfirmedCases = liveCases.getConfirmed() - historicalCases.getLatestHistoricalCount();
             newConfirmed = String.format("%,d", newConfirmedCases);

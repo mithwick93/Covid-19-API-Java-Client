@@ -10,10 +10,14 @@ public class HistoricalCases {
     private Map<String, Long> dates;
 
     @JsonIgnore
-    private Long latestHistoricalCount;
+    private long latestHistoricalCount;
 
     public Map<String, Long> getDates() {
         return dates;
+    }
+
+    public long getLatestHistoricalCount() {
+        return latestHistoricalCount;
     }
 
     public void setDates(Map<String, Long> dates) {
@@ -21,8 +25,7 @@ public class HistoricalCases {
         this.setLatestHistoricalCount(dates);
     }
 
-    @JsonIgnore
-    public void setLatestHistoricalCount(Map<String, Long> dates) {
+    private void setLatestHistoricalCount(Map<String, Long> dates) {
         ArrayList<String> datesList = new ArrayList<>(dates.keySet());
         datesList
                 .stream()
@@ -30,10 +33,6 @@ public class HistoricalCases {
                 .ifPresent(
                         maxDate -> this.latestHistoricalCount = dates.get(maxDate)
                 );
-    }
-
-    public Long getLatestHistoricalCount() {
-        return latestHistoricalCount;
     }
 
     @Override

@@ -3,24 +3,24 @@ package org.mithwick.covid19.client.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Vaccines {
-    private Long population;
+    private long population;
 
     @JsonProperty("people_vaccinated")
-    private Long peopleVaccinated;
+    private long peopleVaccinated;
 
-    public Long getPopulation() {
+    public long getPopulation() {
         return population;
     }
 
-    public void setPopulation(Long population) {
+    public void setPopulation(long population) {
         this.population = population;
     }
 
-    public Long getPeopleVaccinated() {
+    public long getPeopleVaccinated() {
         return peopleVaccinated;
     }
 
-    public void setPeopleVaccinated(Long peopleVaccinated) {
+    public void setPeopleVaccinated(long peopleVaccinated) {
         this.peopleVaccinated = peopleVaccinated;
     }
 

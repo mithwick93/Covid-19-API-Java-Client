@@ -31,8 +31,8 @@ public class Main {
     }
 
     private static void displayMainMenu() {
-        System.out.println("\tPress (1) to enter country name");
-        System.out.println("\tPress (0) to exit the program");
+        System.out.println("\tPress 1 to enter country name");
+        System.out.println("\tPress 0 to exit the program");
     }
 
     private static InputChoice getMainMenuUserChoice() {
@@ -70,7 +70,6 @@ public class Main {
 
         Covid19APIClientService covid19APIClientService = new Covid19APIClientService(httpClient, country);
         covid19APIClientService.displayInformation();
-
     }
 
     private static void handleExit(InputChoice choice) {
