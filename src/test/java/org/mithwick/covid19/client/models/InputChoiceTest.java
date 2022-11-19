@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class InputChoiceTest {
 
     @Test
-    public void testReturnExitChoice() {
+    public void getInputChoice_zero_ExitChoice() {
         int input = 0;
 
         InputChoice actualInputChoice = InputChoice.getInputChoice(input);
@@ -16,7 +16,7 @@ class InputChoiceTest {
     }
 
     @Test
-    public void testReturnEnterCountryChoice() {
+    public void getInputChoice_one_EnterCountryChoice() {
         int input = 1;
 
         InputChoice actualInputChoice = InputChoice.getInputChoice(input);
@@ -25,7 +25,7 @@ class InputChoiceTest {
     }
 
     @Test
-    public void testInvalidChoice() {
+    public void getInputChoice_invalid_InvalidChoice() {
         int input = 5;
 
         InputChoice actualInputChoice = InputChoice.getInputChoice(input);

@@ -1,6 +1,7 @@
 package org.mithwick.covid19.client;
 
 import org.mithwick.covid19.client.models.InputChoice;
+import org.mithwick.covid19.client.validations.InputValidator;
 
 import java.util.Scanner;
 
@@ -53,6 +54,12 @@ public class Main {
         if (country == null) {
             return;
         }
+
+        if (!InputValidator.isValidCountryName(country)) {
+            System.out.println("Invalid Country Name. Please try again");
+            return;
+        }
+
     }
 
     private static void handleExit(InputChoice choice) {
