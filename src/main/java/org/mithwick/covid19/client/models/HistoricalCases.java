@@ -1,15 +1,11 @@
 package org.mithwick.covid19.client.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.util.ArrayList;
 import java.util.Map;
 
 public class HistoricalCases {
 
     private Map<String, Long> dates;
-
-    @JsonIgnore
     private long latestHistoricalCount;
 
     public Map<String, Long> getDates() {
