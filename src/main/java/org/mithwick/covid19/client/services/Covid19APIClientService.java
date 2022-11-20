@@ -6,17 +6,19 @@ import org.mithwick.covid19.client.models.Vaccines;
 import org.mithwick.covid19.client.models.response.Covid19APIResponse;
 import org.mithwick.covid19.client.services.utils.Covid19APIUtil;
 
-import java.net.http.HttpClient;
-
 public class Covid19APIClientService {
 
     private static final String NA = "N/A";
     private final Covid19APIUtil covid19APIUtil;
-    private final String country;
+    private String country;
 
-    public Covid19APIClientService(HttpClient httpClient, String country) {
-        this.covid19APIUtil = new Covid19APIUtil(httpClient, country);
+    public Covid19APIClientService(Covid19APIUtil covid19APIUtil) {
+        this.covid19APIUtil = covid19APIUtil;
+    }
+
+    public void setCountry(String country) {
         this.country = country;
+        covid19APIUtil.setCountry(country);
     }
 
     public void displayInformation() {

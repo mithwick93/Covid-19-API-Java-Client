@@ -13,20 +13,26 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Objects;
 
 public class Covid19APIUtil {
-
     private static final String BASE_URL = "https://covid-api.mmediagroup.fr/v1";
-
     private static final ObjectMapper mapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     private final HttpClient httpClient;
-    private final String encodedCountry;
+    private String country;
 
-    public Covid19APIUtil(HttpClient httpClient, String country) {
+    public Covid19APIUtil(HttpClient httpClient) {
         this.httpClient = httpClient;
-        this.encodedCountry = URLEncoder.encode(country, StandardCharsets.UTF_8);
+    }
+
+    public void setCountry(String country) {
+        this.country = URLEncoder.encode(Objects.requireNonNull(country), StandardCharsets.UTF_8);
+    }
+
+    public String setCountry() {
+        return country;
     }
 
     public <T> Covid19APIResponse<T> doGetRequest(URI uri, Class<T> contentClass) {
@@ -53,15 +59,15 @@ public class Covid19APIUtil {
     }
 
     public URI getCurrentInformationURI() {
-        return URI.create(BASE_URL.concat("/cases?country=").concat(encodedCountry));
+        return URI.create(BASE_URL.concat("/cases?country=").concat(country));
     }
 
     public URI getVaccineInformationURI() {
-        return URI.create(BASE_URL.concat("/vaccines?country=").concat(encodedCountry));
+        return URI.create(BASE_URL.concat("/vaccines?country=").concat(country));
     }
 
     public URI getHistoricalInformationURI() {
-        return URI.create(BASE_URL.concat("/history?status=confirmed&country=").concat(encodedCountry));
+        return URI.create(BASE_URL.concat("/history?status=confirmed&country=").concat(country));
     }
 
 }

@@ -13,10 +13,6 @@ public class InputValidator {
         Arrays.stream(Locale.getAvailableLocales()).forEach(locale -> countryNames.add(locale.getDisplayCountry()));
     }
 
-    public static Set<String> getValidCountryNames() {
-        return countryNames;
-    }
-
     public static boolean isValidCountryName(String country) {
         return country != null && !"".equals(country.trim()) && countryNames.contains(country);
     }

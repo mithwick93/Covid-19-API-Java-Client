@@ -1,5 +1,8 @@
 package org.mithwick.covid19.client.models.request;
 
+/**
+ * Enum of user choices
+ */
 public enum InputChoice {
     EXIT, ENTER_COUNTRY_NAME, INVALID;
 

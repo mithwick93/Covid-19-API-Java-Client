@@ -25,7 +25,7 @@ public class HistoricalCases {
         ArrayList<String> datesList = new ArrayList<>(dates.keySet());
         datesList
                 .stream()
-                .max(String::compareTo)
+                .max(String::compareTo) // we can use string compare to get the latest date because strings data is formatted
                 .ifPresent(
                         maxDate -> this.latestHistoricalCount = dates.get(maxDate)
                 );

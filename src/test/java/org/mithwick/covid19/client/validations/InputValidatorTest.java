@@ -46,12 +46,4 @@ class InputValidatorTest {
         assertFalse(actualResult);
     }
 
-    @Test
-    public void getValidCountryNames_notEmpty() {
-        Set<String> validCountryNames = InputValidator.getValidCountryNames();
-
-        assertNotNull(validCountryNames);
-        assertTrue(validCountryNames.size() > 0);
-    }
-
 }
