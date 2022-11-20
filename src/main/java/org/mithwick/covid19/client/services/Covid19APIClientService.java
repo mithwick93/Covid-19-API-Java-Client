@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mithwick.covid19.client.models.Covid19Information;
-import org.mithwick.covid19.client.models.HistoricalCases;
-import org.mithwick.covid19.client.models.LiveCases;
-import org.mithwick.covid19.client.models.Vaccines;
+import org.mithwick.covid19.client.models.HistoricalData;
+import org.mithwick.covid19.client.models.LiveData;
+import org.mithwick.covid19.client.models.VaccineData;
 import org.mithwick.covid19.client.models.response.Covid19APIResponse;
 
 import java.io.IOException;
@@ -16,7 +16,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.util.Objects;
 
 public class Covid19APIClientService {
@@ -65,22 +64,22 @@ public class Covid19APIClientService {
     public Covid19Information getCovid19Information(String country) {
         String encodedCountry = URLEncoder.encode(Objects.requireNonNull(country), StandardCharsets.UTF_8);
 
-        Covid19APIResponse<LiveCases> liveCasesResponse = doGetRequest(getCurrentInformationURI(encodedCountry), LiveCases.class);
-        Covid19APIResponse<Vaccines> vaccinesResponse = doGetRequest(getVaccineInformationURI(encodedCountry), Vaccines.class);
-        Covid19APIResponse<HistoricalCases> historicalCasesResponse = doGetRequest(getHistoricalInformationURI(encodedCountry), HistoricalCases.class);
+        Covid19APIResponse<LiveData> liveDataResponse = doGetRequest(getCurrentInformationURI(encodedCountry), LiveData.class);
+        Covid19APIResponse<VaccineData> vaccineDataResponse = doGetRequest(getVaccineInformationURI(encodedCountry), VaccineData.class);
+        Covid19APIResponse<HistoricalData> historicalDataResponse = doGetRequest(getHistoricalInformationURI(encodedCountry), HistoricalData.class);
 
         Covid19Information covid19Information = new Covid19Information(country);
 
-        if (liveCasesResponse != null) {
-            covid19Information.setLiveCases(liveCasesResponse.getData());
+        if (liveDataResponse != null) {
+            covid19Information.setLiveData(liveDataResponse.getData());
         }
 
-        if (vaccinesResponse != null) {
-            covid19Information.setVaccines(vaccinesResponse.getData());
+        if (vaccineDataResponse != null) {
+            covid19Information.setVaccineData(vaccineDataResponse.getData());
         }
 
-        if (historicalCasesResponse != null) {
-            covid19Information.setHistoricalCases(historicalCasesResponse.getData());
+        if (historicalDataResponse != null) {
+            covid19Information.setHistoricalData(historicalDataResponse.getData());
         }
 
         return covid19Information;
@@ -107,6 +106,7 @@ public class Covid19APIClientService {
             HttpResponse<String> response = this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             Covid19APIResponse<T> covid19APIResponse = mapper.readValue(response.body(), type);
 
+            // todo check response code
             System.out.println(" - done");
             return covid19APIResponse;
         } catch (IOException | InterruptedException e) {
