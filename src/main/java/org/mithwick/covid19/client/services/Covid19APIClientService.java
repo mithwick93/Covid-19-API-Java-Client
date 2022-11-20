@@ -98,7 +98,6 @@ public class Covid19APIClientService {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uri)
-                .timeout(Duration.ofSeconds(60))
                 .header("Content-Type", "application/json")
                 .GET()
                 .build();
