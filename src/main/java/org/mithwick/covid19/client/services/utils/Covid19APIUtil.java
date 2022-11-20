@@ -35,6 +35,13 @@ public class Covid19APIUtil {
         return country;
     }
 
+    /**
+     * Make GET request to Covide-19 API
+     *
+     * @param uri          url to get information
+     * @param contentClass type of response expected
+     * @return Covid 19 API response
+     */
     public <T> Covid19APIResponse<T> doGetRequest(URI uri, Class<T> contentClass) {
         System.out.print("\tFetching ".concat(contentClass.getSimpleName()).concat(" information"));
 
@@ -48,24 +55,39 @@ public class Covid19APIUtil {
 
         try {
             HttpResponse<String> response = this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            Covid19APIResponse<T> tCovid19APIResponse = mapper.readValue(response.body(), type);
+            Covid19APIResponse<T> covid19APIResponse = mapper.readValue(response.body(), type);
 
             System.out.println(" - done");
-            return tCovid19APIResponse;
+            return covid19APIResponse;
         } catch (IOException | InterruptedException e) {
             System.err.println("\n\tAn error occurred: " + e.getMessage());
             return null;
         }
     }
 
+    /**
+     * Get current information URL
+     *
+     * @return current information URL
+     */
     public URI getCurrentInformationURI() {
         return URI.create(BASE_URL.concat("/cases?country=").concat(country));
     }
 
+    /**
+     * Get vaccine information URL
+     *
+     * @return vaccine information URL
+     */
     public URI getVaccineInformationURI() {
         return URI.create(BASE_URL.concat("/vaccines?country=").concat(country));
     }
 
+    /**
+     * Get historical confirmed cases information URL
+     *
+     * @return historical confirmed cases information URL
+     */
     public URI getHistoricalInformationURI() {
         return URI.create(BASE_URL.concat("/history?status=confirmed&country=").concat(country));
     }

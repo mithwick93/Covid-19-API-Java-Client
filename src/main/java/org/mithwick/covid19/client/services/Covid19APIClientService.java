@@ -21,6 +21,9 @@ public class Covid19APIClientService {
         covid19APIUtil.setCountry(country);
     }
 
+    /**
+     * Fetch and display Covid-19 information
+     */
     public void displayInformation() {
         Covid19APIResponse<LiveCases> liveCasesResponse = covid19APIUtil.doGetRequest(covid19APIUtil.getCurrentInformationURI(), LiveCases.class);
         Covid19APIResponse<Vaccines> vaccinesResponse = covid19APIUtil.doGetRequest(covid19APIUtil.getVaccineInformationURI(), Vaccines.class);
