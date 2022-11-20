@@ -1,14 +1,32 @@
 package org.mithwick.covid19.client.models;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class Covid19InformationTest {
     private static final String country = "Sri Lanka";
+
+    private final PrintStream standardOut = System.out;
+    private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
+
+    @BeforeEach
+    public void setUp() {
+        System.setOut(new PrintStream(outputStreamCaptor));
+    }
+
+    @AfterEach
+    public void tearDown() {
+        System.setOut(standardOut);
+    }
 
     @Test
     public void getConfirmedCases_liveDataNull_NA() {
@@ -264,5 +282,15 @@ class Covid19InformationTest {
         String newConfirmedCases = covid19Information.getNewConfirmedCases();
 
         assertEquals(expectedNewConfirmedCases, newConfirmedCases);
+    }
+
+    @Test
+    public void prettyPrint_correctOutPut() {
+        Covid19Information covid19Information = new Covid19Information(country);
+
+        covid19Information.prettyPrint();
+
+        assertTrue(outputStreamCaptor.toString().trim().contains("Displaying Covid-19 Information of Sri Lanka"));
+
     }
 }
