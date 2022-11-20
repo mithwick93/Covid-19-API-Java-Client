@@ -1,8 +1,8 @@
 package org.mithwick.covid19.client;
 
+import org.mithwick.covid19.client.models.Covid19Information;
 import org.mithwick.covid19.client.models.request.InputChoice;
 import org.mithwick.covid19.client.services.Covid19APIClientService;
-import org.mithwick.covid19.client.services.utils.Covid19APIUtil;
 import org.mithwick.covid19.client.utils.InputProcessor;
 import org.mithwick.covid19.client.validations.InputValidator;
 
@@ -17,8 +17,7 @@ public class Main {
                 .version(HttpClient.Version.HTTP_1_1)
                 .connectTimeout(Duration.ofSeconds(60))
                 .build();
-        Covid19APIUtil covid19APIUtil = new Covid19APIUtil(httpClient);
-        Covid19APIClientService covid19APIClientService = new Covid19APIClientService(covid19APIUtil);
+        Covid19APIClientService covid19APIClientService = new Covid19APIClientService(httpClient);
 
         InputProcessor inputProcessor = new InputProcessor();
 
@@ -26,6 +25,7 @@ public class Main {
         while (true) {
             InputChoice mainChoice = inputProcessor.getMainMenuUserChoice();
 
+            inputProcessor.handleInvalidInput(mainChoice);
             inputProcessor.handleExit(mainChoice);
 
             String country = inputProcessor.getCountryName(mainChoice);
@@ -43,7 +43,7 @@ public class Main {
             return;
         }
 
-        covid19APIClientService.setCountry(country);
-        covid19APIClientService.displayInformation();
+        Covid19Information covid19Information = covid19APIClientService.getCovid19Information(country);
+        covid19Information.prettyPrint();
     }
 }

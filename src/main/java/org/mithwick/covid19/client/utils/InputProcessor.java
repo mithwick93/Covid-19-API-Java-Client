@@ -12,7 +12,7 @@ public class InputProcessor {
         System.out.println("\tPress 0 to exit the program");
     }
 
-    public  InputChoice getMainMenuUserChoice() {
+    public InputChoice getMainMenuUserChoice() {
         System.out.print("Please enter your choice: ");
 
         String input = scanner.nextLine();
@@ -21,8 +21,6 @@ public class InputProcessor {
             return InputChoice.getInputChoice(mainChoice);
         } catch (NumberFormatException ignored) {
         }
-
-        System.out.println("Invalid input. Please try again");
         return InputChoice.INVALID;
     }
 
@@ -33,6 +31,12 @@ public class InputProcessor {
 
         System.out.print("Please enter ISO 3166-1 alpha-2 compliant country name: ");
         return scanner.nextLine();
+    }
+
+    public void handleInvalidInput(InputChoice choice) {
+        if (InputChoice.INVALID.equals(choice)) {
+            System.out.println("Invalid input. Please try again");
+        }
     }
 
     public void handleExit(InputChoice choice) {

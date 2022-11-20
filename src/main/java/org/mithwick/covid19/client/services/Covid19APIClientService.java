@@ -1,88 +1,118 @@
 package org.mithwick.covid19.client.services;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.mithwick.covid19.client.models.Covid19Information;
 import org.mithwick.covid19.client.models.HistoricalCases;
 import org.mithwick.covid19.client.models.LiveCases;
 import org.mithwick.covid19.client.models.Vaccines;
 import org.mithwick.covid19.client.models.response.Covid19APIResponse;
-import org.mithwick.covid19.client.services.utils.Covid19APIUtil;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.Objects;
 
 public class Covid19APIClientService {
+    private static final String BASE_URL = "https://covid-api.mmediagroup.fr/v1";
+    private static final ObjectMapper mapper = new ObjectMapper()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-    private static final String NA = "N/A";
-    private final Covid19APIUtil covid19APIUtil;
-    private String country;
+    private final HttpClient httpClient;
 
-    public Covid19APIClientService(Covid19APIUtil covid19APIUtil) {
-        this.covid19APIUtil = covid19APIUtil;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-        covid19APIUtil.setCountry(country);
+    public Covid19APIClientService(HttpClient httpClient) {
+        this.httpClient = httpClient;
     }
 
     /**
-     * Fetch and display Covid-19 information
+     * Get current information URL
+     *
+     * @return current information URL
      */
-    public void displayInformation() {
-        Covid19APIResponse<LiveCases> liveCasesResponse = covid19APIUtil.doGetRequest(covid19APIUtil.getCurrentInformationURI(), LiveCases.class);
-        Covid19APIResponse<Vaccines> vaccinesResponse = covid19APIUtil.doGetRequest(covid19APIUtil.getVaccineInformationURI(), Vaccines.class);
-        Covid19APIResponse<HistoricalCases> historicalCasesResponse = covid19APIUtil.doGetRequest(covid19APIUtil.getHistoricalInformationURI(), HistoricalCases.class);
-
-        System.out.println("Displaying Covid-19 Information of ".concat(country));
-
-        displayLiveCases(liveCasesResponse);
-        displayVaccines(vaccinesResponse);
-        displayHistorical(liveCasesResponse, historicalCasesResponse);
+    public URI getCurrentInformationURI(String country) {
+        return URI.create(BASE_URL.concat("/cases?country=").concat(country));
     }
 
-    private void displayLiveCases(Covid19APIResponse<LiveCases> liveCasesResponse) {
-        String confirmed = NA;
-        String recovered = NA;
-        String deaths = NA;
-
-        if (liveCasesResponse != null && liveCasesResponse.getData() != null) {
-            LiveCases liveCases = liveCasesResponse.getData();
-
-            confirmed = String.format("%,d", liveCases.getConfirmed());
-            recovered = String.format("%,d", liveCases.getRecovered());
-            deaths = String.format("%,d", liveCases.getDeaths());
-        }
-
-        System.out.println("\tConfirmed: ".concat(confirmed));
-        System.out.println("\tRecovered: ".concat(recovered));
-        System.out.println("\tDeaths: ".concat(deaths));
+    /**
+     * Get vaccine information URL
+     *
+     * @return vaccine information URL
+     */
+    public URI getVaccineInformationURI(String country) {
+        return URI.create(BASE_URL.concat("/vaccines?country=").concat(country));
     }
 
-    private void displayVaccines(Covid19APIResponse<Vaccines> vaccinesResponse) {
-        if (vaccinesResponse != null && vaccinesResponse.getData() != null) {
-            Vaccines vaccines = vaccinesResponse.getData();
-            long population = vaccines.getPopulation();
-            long peopleVaccinated = vaccines.getPeopleVaccinated();
-
-            if (population != 0) {
-                Double percentage = (peopleVaccinated / population) * 100.0;
-                String vaccinated = String.format("%,.2f", percentage);
-
-                System.out.println("\tVaccinated: ".concat(vaccinated));
-                return;
-            }
-        }
-
-        System.out.println("\tVaccinated: ".concat(NA));
+    /**
+     * Get historical confirmed cases information URL
+     *
+     * @return historical confirmed cases information URL
+     */
+    public URI getHistoricalInformationURI(String country) {
+        return URI.create(BASE_URL.concat("/history?status=confirmed&country=").concat(country));
     }
 
-    private void displayHistorical(Covid19APIResponse<LiveCases> liveCasesResponse, Covid19APIResponse<HistoricalCases> historicalCasesResponse) {
-        String newConfirmed = NA;
+    /**
+     * Fetch  Covid-19 information
+     *
+     * @return Covid-19 information
+     */
+    public Covid19Information getCovid19Information(String country) {
+        String encodedCountry = URLEncoder.encode(Objects.requireNonNull(country), StandardCharsets.UTF_8);
 
-        if (liveCasesResponse != null && liveCasesResponse.getData() != null && historicalCasesResponse != null && historicalCasesResponse.getData() != null) {
-            LiveCases liveCases = liveCasesResponse.getData();
-            HistoricalCases historicalCases = historicalCasesResponse.getData();
+        Covid19APIResponse<LiveCases> liveCasesResponse = doGetRequest(getCurrentInformationURI(encodedCountry), LiveCases.class);
+        Covid19APIResponse<Vaccines> vaccinesResponse = doGetRequest(getVaccineInformationURI(encodedCountry), Vaccines.class);
+        Covid19APIResponse<HistoricalCases> historicalCasesResponse = doGetRequest(getHistoricalInformationURI(encodedCountry), HistoricalCases.class);
 
-            Long newConfirmedCases = liveCases.getConfirmed() - historicalCases.getLatestHistoricalCount();
-            newConfirmed = String.format("%,d", newConfirmedCases);
+        Covid19Information covid19Information = new Covid19Information(country);
+
+        if (liveCasesResponse != null) {
+            covid19Information.setLiveCases(liveCasesResponse.getData());
         }
 
-        System.out.println("\tNew confirmed cases: ".concat(newConfirmed));
+        if (vaccinesResponse != null) {
+            covid19Information.setVaccines(vaccinesResponse.getData());
+        }
+
+        if (historicalCasesResponse != null) {
+            covid19Information.setHistoricalCases(historicalCasesResponse.getData());
+        }
+
+        return covid19Information;
+    }
+
+    /**
+     * Make GET request to Covid-19 API
+     *
+     * @param uri          url to get information
+     * @param contentClass type of response expected
+     * @return Covid 19 API response
+     */
+    public <T> Covid19APIResponse<T> doGetRequest(URI uri, Class<T> contentClass) {
+        System.out.print("\tFetching ".concat(contentClass.getSimpleName()).concat(" information"));
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uri)
+                .timeout(Duration.ofSeconds(60))
+                .header("Content-Type", "application/json")
+                .GET()
+                .build();
+        JavaType type = mapper.getTypeFactory().constructParametricType(Covid19APIResponse.class, contentClass);
+
+        try {
+            HttpResponse<String> response = this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            Covid19APIResponse<T> covid19APIResponse = mapper.readValue(response.body(), type);
+
+            System.out.println(" - done");
+            return covid19APIResponse;
+        } catch (IOException | InterruptedException e) {
+            System.err.println("\n\tAn error occurred: " + e.getMessage());
+            return null;
+        }
     }
 }
