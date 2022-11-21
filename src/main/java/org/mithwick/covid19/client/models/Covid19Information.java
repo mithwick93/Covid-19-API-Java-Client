@@ -1,5 +1,6 @@
 package org.mithwick.covid19.client.models;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +13,8 @@ import java.util.Optional;
 public class Covid19Information {
     private static final String NA = "N/A";
 
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
     private final String country;
 
     private LiveData liveData;

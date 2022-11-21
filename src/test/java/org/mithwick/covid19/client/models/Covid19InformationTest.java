@@ -291,6 +291,11 @@ class Covid19InformationTest {
         covid19Information.prettyPrint();
 
         assertTrue(outputStreamCaptor.toString().trim().contains("Displaying Covid-19 Information of Sri Lanka"));
+        assertTrue(outputStreamCaptor.toString().trim().contains("Confirmed: "));
+        assertTrue(outputStreamCaptor.toString().trim().contains("Recovered: "));
+        assertTrue(outputStreamCaptor.toString().trim().contains("Deaths: "));
+        assertTrue(outputStreamCaptor.toString().trim().contains("Vaccinated: "));
+        assertTrue(outputStreamCaptor.toString().trim().contains("New confirmed cases: "));
 
     }
 }

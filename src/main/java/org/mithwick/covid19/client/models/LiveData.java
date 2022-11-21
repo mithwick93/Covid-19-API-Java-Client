@@ -7,6 +7,4 @@ public class LiveData {
     private long confirmed;
     private long recovered;
     private long deaths;
-
-    private String updated;
 }
