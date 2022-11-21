@@ -27,11 +27,11 @@ public class Main {
         while (true) {
             InputChoice mainChoice = inputProcessor.getMainMenuUserChoice();
 
-            inputProcessor.handleInvalidInput(mainChoice);
-            inputProcessor.handleExit(mainChoice);
-
             String country = inputProcessor.getCountryName(mainChoice);
             displayCovidInformation(country, covid19APIClientService);
+
+            inputProcessor.handleInvalidInput(mainChoice);
+            inputProcessor.handleExit(mainChoice);
         }
     }
 
