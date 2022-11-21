@@ -24,6 +24,14 @@ This project uses Maven as the build automation tool.
 * Java 17
 * Maven
 
+### Dependencies
+
+* fasterxml jackson
+* project lombok
+* junit 5
+* mockito
+* system-lambda
+
 #### Run the tests
 
 ```mvn test```
@@ -37,6 +45,10 @@ This project uses Maven as the build automation tool.
 ```java -cp .\target\Covid-19-API-Java-Client-1.0-SNAPSHOT.jar org.mithwick.covid19.client.Main```
 
 ## Known issues
+
+1. The [API](https://covid-api.mmediagroup.fr/v1/cases) does not return any data but fails with HTTP status code `403`
+   and
+   response body `{"message":"Missing Authentication Token"}`
 
 ## License Information
 
