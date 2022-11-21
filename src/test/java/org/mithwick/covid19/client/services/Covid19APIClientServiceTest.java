@@ -1,5 +1,7 @@
 package org.mithwick.covid19.client.services;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,9 +31,13 @@ class Covid19APIClientServiceTest {
     private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
     private HttpClient mockHttpClient;
 
+    ObjectMapper objectMapper;
+
     @BeforeEach
     public void setUp() {
         mockHttpClient = Mockito.mock(HttpClient.class);
+        objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
         System.setOut(new PrintStream(outputStreamCaptor));
     }
 
@@ -44,7 +50,7 @@ class Covid19APIClientServiceTest {
     public void getCurrentInformationURI_returnURI() {
         String country = "France";
 
-        Covid19APIClientService covid19APIClientService = new Covid19APIClientService(mockHttpClient);
+        Covid19APIClientService covid19APIClientService = new Covid19APIClientService(objectMapper, mockHttpClient);
         URI currentInformationURI = covid19APIClientService.getCurrentInformationURI(country);
 
         assertEquals("/v1/cases", currentInformationURI.getPath());
@@ -55,7 +61,7 @@ class Covid19APIClientServiceTest {
     public void getVaccineInformationURI_returnURI() {
         String country = "France";
 
-        Covid19APIClientService covid19APIClientService = new Covid19APIClientService(mockHttpClient);
+        Covid19APIClientService covid19APIClientService = new Covid19APIClientService(objectMapper, mockHttpClient);
         URI vaccineInformationURI = covid19APIClientService.getVaccineInformationURI(country);
 
         assertEquals("/v1/vaccines", vaccineInformationURI.getPath());
@@ -66,7 +72,7 @@ class Covid19APIClientServiceTest {
     public void getHistoricalInformationURI_returnURI() {
         String country = "France";
 
-        Covid19APIClientService covid19APIClientService = new Covid19APIClientService(mockHttpClient);
+        Covid19APIClientService covid19APIClientService = new Covid19APIClientService(objectMapper, mockHttpClient);
         URI historicalInformationURI = covid19APIClientService.getHistoricalInformationURI(country);
 
         assertEquals("/v1/history", historicalInformationURI.getPath());
@@ -92,7 +98,7 @@ class Covid19APIClientServiceTest {
                 .thenReturn(historicalDataResponse)
                 .thenReturn(vaccineDataResponse);
 
-        Covid19APIClientService covid19APIClientService = new Covid19APIClientService(mockHttpClient);
+        Covid19APIClientService covid19APIClientService = new Covid19APIClientService(objectMapper, mockHttpClient);
         Covid19Information covid19Information = covid19APIClientService.getCovid19Information(country);
 
         assertNotNull(covid19Information);
@@ -118,7 +124,7 @@ class Covid19APIClientServiceTest {
         when(mockHttpClient.send(Mockito.any(), eq(HttpResponse.BodyHandlers.ofString())))
                 .thenThrow(new IOException());
 
-        Covid19APIClientService covid19APIClientService = new Covid19APIClientService(mockHttpClient);
+        Covid19APIClientService covid19APIClientService = new Covid19APIClientService(objectMapper, mockHttpClient);
         Covid19Information covid19Information = covid19APIClientService.getCovid19Information(country);
 
         assertNotNull(covid19Information);

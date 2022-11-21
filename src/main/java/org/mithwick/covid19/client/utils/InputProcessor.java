@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 @AllArgsConstructor
 public class InputProcessor {
-    private Scanner scanner;
+    private final Scanner scanner;
 
     public void displayMainMenu() {
         System.out.println(Constants.MAIN_CHOICE_1_MESSAGE);

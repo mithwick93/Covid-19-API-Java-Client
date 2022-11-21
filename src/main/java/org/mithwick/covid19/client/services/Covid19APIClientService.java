@@ -1,8 +1,8 @@
 package org.mithwick.covid19.client.services;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
 import org.mithwick.covid19.client.Constants;
 import org.mithwick.covid19.client.models.Covid19Information;
 import org.mithwick.covid19.client.models.HistoricalData;
@@ -19,15 +19,10 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
+@AllArgsConstructor
 public class Covid19APIClientService {
-    private static final ObjectMapper mapper = new ObjectMapper()
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
+    private final ObjectMapper objectMapper;
     private final HttpClient httpClient;
-
-    public Covid19APIClientService(HttpClient httpClient) {
-        this.httpClient = httpClient;
-    }
 
     /**
      * Get current information URL
@@ -102,11 +97,11 @@ public class Covid19APIClientService {
                 .header(Constants.CONTENT_TYPE_KEY, Constants.CONTENT_TYPE_JSON)
                 .GET()
                 .build();
-        JavaType type = mapper.getTypeFactory().constructParametricType(Covid19APIResponse.class, contentClass);
+        JavaType type = objectMapper.getTypeFactory().constructParametricType(Covid19APIResponse.class, contentClass);
 
         try {
             HttpResponse<String> response = this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            Covid19APIResponse<T> covid19APIResponse = mapper.readValue(response.body(), type);
+            Covid19APIResponse<T> covid19APIResponse = objectMapper.readValue(response.body(), type);
 
             // todo check response code
             System.out.println(Constants.FETCHING_MESSAGE_END);

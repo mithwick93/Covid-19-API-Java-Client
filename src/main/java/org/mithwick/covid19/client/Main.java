@@ -1,5 +1,7 @@
 package org.mithwick.covid19.client;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mithwick.covid19.client.models.Covid19Information;
 import org.mithwick.covid19.client.models.request.InputChoice;
 import org.mithwick.covid19.client.services.Covid19APIClientService;
@@ -15,11 +17,13 @@ public class Main {
         System.out.println(Constants.WELCOME_MESSAGE);
 
         Scanner scanner = new Scanner(System.in);
+        ObjectMapper objectMapper = new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         HttpClient httpClient = HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_1_1)
                 .connectTimeout(Duration.ofSeconds(60))
                 .build();
-        Covid19APIClientService covid19APIClientService = new Covid19APIClientService(httpClient);
+        Covid19APIClientService covid19APIClientService = new Covid19APIClientService(objectMapper, httpClient);
 
         InputProcessor inputProcessor = new InputProcessor(scanner);
 
