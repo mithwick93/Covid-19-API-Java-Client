@@ -26,7 +26,6 @@ import static org.mockito.Mockito.when;
 
 class Covid19APIClientServiceTest {
     private final PrintStream standardOut = System.out;
-    private final PrintStream errOut = System.err;
     private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
     private HttpClient mockHttpClient;
 
@@ -34,13 +33,11 @@ class Covid19APIClientServiceTest {
     public void setUp() {
         mockHttpClient = Mockito.mock(HttpClient.class);
         System.setOut(new PrintStream(outputStreamCaptor));
-        System.setErr(new PrintStream(outputStreamCaptor));
     }
 
     @AfterEach
     public void tearDown() {
         System.setOut(standardOut);
-        System.setErr(errOut);
     }
 
     @Test
@@ -128,7 +125,5 @@ class Covid19APIClientServiceTest {
         assertNull(covid19Information.getLiveData());
         assertNull(covid19Information.getHistoricalData());
         assertNull(covid19Information.getVaccineData());
-
     }
-
 }

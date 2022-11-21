@@ -113,7 +113,7 @@ public class Covid19APIClientService {
             return covid19APIResponse;
         } catch (IOException | InterruptedException e) {
             // do not fail the flow if we do not get a response
-            System.err.println(Constants.FETCHING_MESSAGE_ERROR + e.getMessage());
+            System.out.println(Constants.FETCHING_MESSAGE_ERROR + e);
             return null;
         }
     }

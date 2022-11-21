@@ -22,7 +22,6 @@ public class Constants {
     public static final String DISPLAY_COUNTRY_INFORMATION = "Displaying Covid-19 Information of ";
     public static final String EXIT_PROGRAM_MESSAGE = "Exiting program.";
 
-
     public static final String CONFIRMED_PREFIX = "Confirmed: ";
     public static final String RECOVERED_PREFIX = "Recovered: ";
     public static final String DEATHS_PREFIX = "Deaths: ";
@@ -39,5 +38,5 @@ public class Constants {
     public static final String FETCHING_MESSAGE_PREFIX = "\tFetching ";
     public static final String FETCHING_MESSAGE_PREFIX_SUFFIX = " information";
     public static final String FETCHING_MESSAGE_END = " - done";
-    public static final String FETCHING_MESSAGE_ERROR = "\n\tAn error occurred: ";
+    public static final String FETCHING_MESSAGE_ERROR = "\n\t\tAn error occurred: ";
 }
