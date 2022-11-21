@@ -42,7 +42,7 @@ This project uses Maven as the build automation tool.
 
 #### Run the Application
 
-```java -cp .\target\Covid-19-API-Java-Client-1.0-SNAPSHOT.jar org.mithwick.covid19.client.Main```
+```java -jar .\target\Covid-19-API-Java-Client-1.0-SNAPSHOT.jar```
 
 ## Known issues
 
