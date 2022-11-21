@@ -8,18 +8,20 @@ import org.mithwick.covid19.client.validations.InputValidator;
 
 import java.net.http.HttpClient;
 import java.time.Duration;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         System.out.println("Welcome to Covid-19-API Java Client");
 
+        Scanner scanner = new Scanner(System.in);
         HttpClient httpClient = HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_1_1)
                 .connectTimeout(Duration.ofSeconds(60))
                 .build();
         Covid19APIClientService covid19APIClientService = new Covid19APIClientService(httpClient);
 
-        InputProcessor inputProcessor = new InputProcessor();
+        InputProcessor inputProcessor = new InputProcessor(scanner);
 
         inputProcessor.displayMainMenu();
         while (true) {

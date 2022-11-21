@@ -1,11 +1,13 @@
 package org.mithwick.covid19.client.utils;
 
+import lombok.AllArgsConstructor;
 import org.mithwick.covid19.client.models.request.InputChoice;
 
 import java.util.Scanner;
 
+@AllArgsConstructor
 public class InputProcessor {
-    private static final Scanner scanner = new Scanner(System.in);
+    private Scanner scanner;
 
     public void displayMainMenu() {
         System.out.println("\tPress 1 to enter country name");
