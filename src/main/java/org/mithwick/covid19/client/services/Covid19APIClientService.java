@@ -59,9 +59,11 @@ public class Covid19APIClientService {
     /**
      * Fetch  Covid-19 information
      *
+     * @param country name of the country to fetch information
      * @return Covid-19 information
      */
     public Covid19Information getCovid19Information(String country) {
+        // encode the country string to correctly send all valid characters
         String encodedCountry = URLEncoder.encode(Objects.requireNonNull(country), StandardCharsets.UTF_8);
 
         Covid19APIResponse<LiveData> liveDataResponse = doGetRequest(getCurrentInformationURI(encodedCountry), LiveData.class);
@@ -110,6 +112,7 @@ public class Covid19APIClientService {
             System.out.println(" - done");
             return covid19APIResponse;
         } catch (IOException | InterruptedException e) {
+            // do not fail the flow if we do not get a response
             System.err.println("\n\tAn error occurred: " + e.getMessage());
             return null;
         }
