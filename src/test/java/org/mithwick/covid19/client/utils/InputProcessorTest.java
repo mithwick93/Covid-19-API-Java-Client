@@ -74,6 +74,19 @@ class InputProcessorTest {
     }
 
     @Test
+    public void getCountryName_enterCountryNameChoice_readInputTrimmed() {
+        String input = "  Sri Lanka  ";
+        String expectedOutput = input.trim();
+        InputChoice choice = InputChoice.ENTER_COUNTRY_NAME;
+        InputProcessor inputProcessor = new InputProcessor(new Scanner(input));
+
+        String countryName = inputProcessor.getCountryName(choice);
+
+        assertTrue(outputStreamCaptor.toString().trim().contains("Please enter ISO 3166-1 alpha-2 compliant country name:"));
+        assertEquals(expectedOutput, countryName);
+    }
+
+    @Test
     public void getCountryName_exitChoice_doNotReadInput() {
         InputChoice choice = InputChoice.EXIT;
         InputProcessor inputProcessor = new InputProcessor(new Scanner(System.in));

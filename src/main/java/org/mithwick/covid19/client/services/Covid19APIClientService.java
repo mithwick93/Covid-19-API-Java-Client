@@ -3,6 +3,7 @@ package org.mithwick.covid19.client.services;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.mithwick.covid19.client.Constants;
 import org.mithwick.covid19.client.models.Covid19Information;
 import org.mithwick.covid19.client.models.HistoricalData;
 import org.mithwick.covid19.client.models.LiveData;
@@ -19,7 +20,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 public class Covid19APIClientService {
-    private static final String BASE_URL = "https://covid-api.mmediagroup.fr/v1";
     private static final ObjectMapper mapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
@@ -35,16 +35,7 @@ public class Covid19APIClientService {
      * @return current information URL
      */
     public URI getCurrentInformationURI(String country) {
-        return URI.create(BASE_URL.concat("/cases?country=").concat(country));
-    }
-
-    /**
-     * Get vaccine information URL
-     *
-     * @return vaccine information URL
-     */
-    public URI getVaccineInformationURI(String country) {
-        return URI.create(BASE_URL.concat("/vaccines?country=").concat(country));
+        return URI.create(Constants.BASE_URL.concat(Constants.CURRENT_DATA_PATH).concat(country));
     }
 
     /**
@@ -53,7 +44,16 @@ public class Covid19APIClientService {
      * @return historical confirmed cases information URL
      */
     public URI getHistoricalInformationURI(String country) {
-        return URI.create(BASE_URL.concat("/history?status=confirmed&country=").concat(country));
+        return URI.create(Constants.BASE_URL.concat(Constants.HISTORY_DATA_PATH).concat(country));
+    }
+
+    /**
+     * Get vaccine information URL
+     *
+     * @return vaccine information URL
+     */
+    public URI getVaccineInformationURI(String country) {
+        return URI.create(Constants.BASE_URL.concat(Constants.VACCINE_DATA_PATH).concat(country));
     }
 
     /**
@@ -67,8 +67,8 @@ public class Covid19APIClientService {
         String encodedCountry = URLEncoder.encode(Objects.requireNonNull(country), StandardCharsets.UTF_8);
 
         Covid19APIResponse<LiveData> liveDataResponse = doGetRequest(getCurrentInformationURI(encodedCountry), LiveData.class);
-        Covid19APIResponse<VaccineData> vaccineDataResponse = doGetRequest(getVaccineInformationURI(encodedCountry), VaccineData.class);
         Covid19APIResponse<HistoricalData> historicalDataResponse = doGetRequest(getHistoricalInformationURI(encodedCountry), HistoricalData.class);
+        Covid19APIResponse<VaccineData> vaccineDataResponse = doGetRequest(getVaccineInformationURI(encodedCountry), VaccineData.class);
 
         Covid19Information covid19Information = new Covid19Information(country);
 
@@ -76,12 +76,12 @@ public class Covid19APIClientService {
             covid19Information.setLiveData(liveDataResponse.getData());
         }
 
-        if (vaccineDataResponse != null) {
-            covid19Information.setVaccineData(vaccineDataResponse.getData());
-        }
-
         if (historicalDataResponse != null) {
             covid19Information.setHistoricalData(historicalDataResponse.getData());
+        }
+
+        if (vaccineDataResponse != null) {
+            covid19Information.setVaccineData(vaccineDataResponse.getData());
         }
 
         return covid19Information;
@@ -95,11 +95,11 @@ public class Covid19APIClientService {
      * @return Covid 19 API response
      */
     public <T> Covid19APIResponse<T> doGetRequest(URI uri, Class<T> contentClass) {
-        System.out.print("\tFetching ".concat(contentClass.getSimpleName()).concat(" information"));
+        System.out.print(Constants.FETCHING_MESSAGE_PREFIX.concat(contentClass.getSimpleName()).concat(Constants.FETCHING_MESSAGE_PREFIX_SUFFIX));
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uri)
-                .header("Content-Type", "application/json")
+                .header(Constants.CONTENT_TYPE_KEY, Constants.CONTENT_TYPE_JSON)
                 .GET()
                 .build();
         JavaType type = mapper.getTypeFactory().constructParametricType(Covid19APIResponse.class, contentClass);
@@ -109,11 +109,11 @@ public class Covid19APIClientService {
             Covid19APIResponse<T> covid19APIResponse = mapper.readValue(response.body(), type);
 
             // todo check response code
-            System.out.println(" - done");
+            System.out.println(Constants.FETCHING_MESSAGE_END);
             return covid19APIResponse;
         } catch (IOException | InterruptedException e) {
             // do not fail the flow if we do not get a response
-            System.err.println("\n\tAn error occurred: " + e.getMessage());
+            System.err.println(Constants.FETCHING_MESSAGE_ERROR + e.getMessage());
             return null;
         }
     }

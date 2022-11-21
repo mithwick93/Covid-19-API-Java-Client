@@ -12,7 +12,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Welcome to Covid-19-API Java Client");
+        System.out.println(Constants.WELCOME_MESSAGE);
 
         Scanner scanner = new Scanner(System.in);
         HttpClient httpClient = HttpClient.newBuilder()
@@ -41,7 +41,7 @@ public class Main {
         }
 
         if (!InputValidator.isValidCountryName(country)) {
-            System.out.println("Invalid Country Name. Please try again");
+            System.out.println(Constants.INVALID_COUNTRY_MESSAGE);
             return;
         }
 

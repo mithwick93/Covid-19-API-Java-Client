@@ -2,6 +2,7 @@ package org.mithwick.covid19.client.validations;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.mithwick.covid19.client.Constants;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -18,6 +19,6 @@ public class InputValidator {
     }
 
     public static boolean isValidCountryName(String country) {
-        return country != null && !"".equals(country.trim()) && countryNames.contains(country);
+        return country != null && !Constants.EMPTY_STRING.equals(country.trim()) && countryNames.contains(country);
     }
 }

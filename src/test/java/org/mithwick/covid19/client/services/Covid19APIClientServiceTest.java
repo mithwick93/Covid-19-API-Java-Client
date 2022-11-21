@@ -92,8 +92,8 @@ class Covid19APIClientServiceTest {
 
         when(mockHttpClient.send(Mockito.any(), eq(HttpResponse.BodyHandlers.ofString())))
                 .thenReturn(liveDataResponse)
-                .thenReturn(vaccineDataResponse)
-                .thenReturn(historicalDataResponse);
+                .thenReturn(historicalDataResponse)
+                .thenReturn(vaccineDataResponse);
 
         Covid19APIClientService covid19APIClientService = new Covid19APIClientService(mockHttpClient);
         Covid19Information covid19Information = covid19APIClientService.getCovid19Information(country);

@@ -3,6 +3,7 @@ package org.mithwick.covid19.client.models;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.mithwick.covid19.client.Constants;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -11,8 +12,6 @@ import java.util.Optional;
 @Getter
 @Setter
 public class Covid19Information {
-    private static final String NA = "N/A";
-
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     private final String country;
@@ -26,33 +25,33 @@ public class Covid19Information {
     }
 
     public String getConfirmedCases() {
-        String confirmed = NA;
+        String confirmed = Constants.NA;
 
         if (getLiveData() != null) {
-            confirmed = String.format("%,d", getLiveData().getConfirmed());
+            confirmed = String.format(Constants.THOUSAND_SEPARATOR_FORMAT, getLiveData().getConfirmed());
         }
 
-        return "Confirmed: ".concat(confirmed);
+        return Constants.CONFIRMED_PREFIX.concat(confirmed);
     }
 
     public String getRecoveredCases() {
-        String recovered = NA;
+        String recovered = Constants.NA;
 
         if (getLiveData() != null) {
-            recovered = String.format("%,d", getLiveData().getRecovered());
+            recovered = String.format(Constants.THOUSAND_SEPARATOR_FORMAT, getLiveData().getRecovered());
         }
 
-        return "Recovered: ".concat(recovered);
+        return Constants.RECOVERED_PREFIX.concat(recovered);
     }
 
     public String getDeathCases() {
-        String deaths = NA;
+        String deaths = Constants.NA;
 
         if (getLiveData() != null) {
-            deaths = String.format("%,d", getLiveData().getDeaths());
+            deaths = String.format(Constants.THOUSAND_SEPARATOR_FORMAT, getLiveData().getDeaths());
         }
 
-        return "Deaths: ".concat(deaths);
+        return Constants.DEATHS_PREFIX.concat(deaths);
     }
 
     public String getVaccinatedPercentage() {
@@ -62,33 +61,36 @@ public class Covid19Information {
 
             if (population != 0) {
                 double percentage = ((double) peopleVaccinated / population) * 100.0;
-                String vaccinatedPercentage = String.format("%,.2f", percentage);
+                String vaccinatedPercentage = String.format(Constants.DOUBLE_ROUND_OFF_FORMAT, percentage);
 
-                return "Vaccinated: ".concat(vaccinatedPercentage).concat("%");
+                return Constants.VACCINATED_PREFIX.concat(vaccinatedPercentage).concat(Constants.PERCENTAGE_SYMBOL);
             }
         }
 
-        return "Vaccinated: ".concat(NA);
+        return Constants.VACCINATED_PREFIX.concat(Constants.NA);
     }
 
     public String getNewConfirmedCases() {
-        String newConfirmed = NA;
+        String newConfirmed = Constants.NA;
 
         if (getLiveData() != null && getHistoricalData() != null) {
             Long newConfirmedCases = getLiveData().getConfirmed() - getLatestHistoricalCount();
-            newConfirmed = String.format("%,d", newConfirmedCases);
+            newConfirmed = String.format(Constants.THOUSAND_SEPARATOR_FORMAT, newConfirmedCases);
         }
 
-        return "New confirmed cases: ".concat(newConfirmed);
+        return Constants.NEW_CONFIRMED_PREFIX.concat(newConfirmed);
     }
 
     public void prettyPrint() {
-        System.out.println("Displaying Covid-19 Information of ".concat(country));
-        System.out.println("\t".concat(getConfirmedCases()));
-        System.out.println("\t".concat(getRecoveredCases()));
-        System.out.println("\t".concat(getDeathCases()));
-        System.out.println("\t".concat(getVaccinatedPercentage()));
-        System.out.println("\t".concat(getNewConfirmedCases()));
+        System.out.println(Constants.DISPLAY_COUNTRY_INFORMATION.concat(country));
+
+        System.out.println(Constants.TAB_CHARACTER.concat(getConfirmedCases()));
+        System.out.println(Constants.TAB_CHARACTER.concat(getRecoveredCases()));
+        System.out.println(Constants.TAB_CHARACTER.concat(getDeathCases()));
+
+        System.out.println(Constants.TAB_CHARACTER.concat(getVaccinatedPercentage()));
+
+        System.out.println(Constants.TAB_CHARACTER.concat(getNewConfirmedCases()));
     }
 
     private long getLatestHistoricalCount() {

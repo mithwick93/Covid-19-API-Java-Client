@@ -1,6 +1,7 @@
 package org.mithwick.covid19.client.utils;
 
 import lombok.AllArgsConstructor;
+import org.mithwick.covid19.client.Constants;
 import org.mithwick.covid19.client.models.request.InputChoice;
 
 import java.util.Scanner;
@@ -10,12 +11,12 @@ public class InputProcessor {
     private Scanner scanner;
 
     public void displayMainMenu() {
-        System.out.println("\tPress 1 to enter country name");
-        System.out.println("\tPress 0 to exit the program");
+        System.out.println(Constants.MAIN_CHOICE_1_MESSAGE);
+        System.out.println(Constants.MAIN_CHOICE_2_MESSAGE);
     }
 
     public InputChoice getMainMenuUserChoice() {
-        System.out.print("Please enter your choice: ");
+        System.out.print(Constants.ENTER_MAIN_CHOICE_MESSAGE);
 
         String input = scanner.nextLine();
         try {
@@ -31,19 +32,19 @@ public class InputProcessor {
             return null;
         }
 
-        System.out.print("Please enter ISO 3166-1 alpha-2 compliant country name: ");
-        return scanner.nextLine();
+        System.out.print(Constants.ENTER_COUNTRY_MESSAGE);
+        return scanner.nextLine().trim();
     }
 
     public void handleInvalidInput(InputChoice choice) {
         if (InputChoice.INVALID.equals(choice)) {
-            System.out.println("Invalid input. Please try again");
+            System.out.println(Constants.INVALID_MAIN_CHOICE_MESSAGE);
         }
     }
 
     public void handleExit(InputChoice choice) {
         if (InputChoice.EXIT.equals(choice)) {
-            System.out.println("Exiting program.");
+            System.out.println(Constants.EXIT_PROGRAM_MESSAGE);
             System.exit(0);
         }
     }
