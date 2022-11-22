@@ -6,9 +6,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.NONE)
 public class Constants {
     public static final String BASE_URL = "https://covid-api.mmediagroup.fr/v1";
-    public static final String CURRENT_DATA_PATH = "/cases?country=";
-    public static final String HISTORY_DATA_PATH = "/history?status=confirmed&country=";
-    public static final String VACCINE_DATA_PATH = "/vaccines?country=";
+    public static final String CURRENT_DATA_PATH = "/cases?country=%s";
+    public static final String HISTORY_DATA_PATH = "/history?status=%s&country=%s";
+    public static final String VACCINE_DATA_PATH = "/vaccines?country=%s";
     public static final String CONTENT_TYPE_KEY = "Content-Type";
     public static final String CONTENT_TYPE_JSON = "application/json";
 

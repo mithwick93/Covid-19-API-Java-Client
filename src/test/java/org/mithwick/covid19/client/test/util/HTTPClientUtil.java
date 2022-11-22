@@ -20,6 +20,8 @@ public class HTTPClientUtil {
 
     public static final String VACCINE_DATA_RESPONSE_BODY = "{\r\n  \"All\": {\r\n    \"administered\": 7927771,\r\n    \"people_vaccinated\": 2297100,\r\n    \"people_partially_vaccinated\": 5630671,\r\n    \"country\": \"France\",\r\n    \"population\": 64979548,\r\n    \"sq_km_area\": 551500,\r\n    \"life_expectancy\": \"78.8\",\r\n    \"elevation_in_meters\": 375,\r\n    \"continent\": \"Europe\",\r\n    \"abbreviation\": \"FR\",\r\n    \"location\": \"Western Europe\",\r\n    \"iso\": 250,\r\n    \"capital_city\": \"Paris\",\r\n    \"lat\": \"46.2276\",\r\n    \"long\": \"2.2137\",\r\n    \"updated\": \"2020/12/26 12:21:56+00\"\r\n  }\r\n}";
 
+    public static final String FORBIDDEN_ERROR_BODY = "{\"message\":\"Missing Authentication Token\"}";
+
     /**
      * Get Mock Http response
      *

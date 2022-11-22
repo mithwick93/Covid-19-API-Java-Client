@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.mithwick.covid19.client.Constants;
+import org.mithwick.covid19.client.exceptions.ExternalServiceException;
 import org.mithwick.covid19.client.models.Covid19Information;
 import org.mithwick.covid19.client.models.HistoricalData;
+import org.mithwick.covid19.client.models.HistoricalDataStatus;
 import org.mithwick.covid19.client.models.LiveData;
 import org.mithwick.covid19.client.models.VaccineData;
 import org.mithwick.covid19.client.models.response.Covid19APIResponse;
@@ -19,6 +21,8 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
+import static java.net.HttpURLConnection.HTTP_OK;
+
 @AllArgsConstructor
 public class Covid19APIClientService {
     private final ObjectMapper objectMapper;
@@ -30,7 +34,8 @@ public class Covid19APIClientService {
      * @return current information URL
      */
     public URI getCurrentInformationURI(String country) {
-        return URI.create(Constants.BASE_URL.concat(Constants.CURRENT_DATA_PATH).concat(country));
+        String url = String.format(Constants.BASE_URL.concat(Constants.CURRENT_DATA_PATH), country);
+        return URI.create(url);
     }
 
     /**
@@ -38,8 +43,9 @@ public class Covid19APIClientService {
      *
      * @return historical confirmed cases information URL
      */
-    public URI getHistoricalInformationURI(String country) {
-        return URI.create(Constants.BASE_URL.concat(Constants.HISTORY_DATA_PATH).concat(country));
+    public URI getHistoricalInformationURI(String country, HistoricalDataStatus historicalDataStatus) {
+        String url = String.format(Constants.BASE_URL.concat(Constants.HISTORY_DATA_PATH), historicalDataStatus.getValue(), country);
+        return URI.create(url);
     }
 
     /**
@@ -48,7 +54,8 @@ public class Covid19APIClientService {
      * @return vaccine information URL
      */
     public URI getVaccineInformationURI(String country) {
-        return URI.create(Constants.BASE_URL.concat(Constants.VACCINE_DATA_PATH).concat(country));
+        String url = String.format(Constants.BASE_URL.concat(Constants.VACCINE_DATA_PATH), country);
+        return URI.create(url);
     }
 
     /**
@@ -61,9 +68,15 @@ public class Covid19APIClientService {
         // encode the country string to correctly send all valid characters
         String encodedCountry = URLEncoder.encode(Objects.requireNonNull(country), StandardCharsets.UTF_8);
 
-        Covid19APIResponse<LiveData> liveDataResponse = doGetRequest(getCurrentInformationURI(encodedCountry), LiveData.class);
-        Covid19APIResponse<HistoricalData> historicalDataResponse = doGetRequest(getHistoricalInformationURI(encodedCountry), HistoricalData.class);
-        Covid19APIResponse<VaccineData> vaccineDataResponse = doGetRequest(getVaccineInformationURI(encodedCountry), VaccineData.class);
+        Covid19APIResponse<LiveData> liveDataResponse = doGetRequest(
+                getCurrentInformationURI(encodedCountry), LiveData.class
+        );
+        Covid19APIResponse<HistoricalData> historicalDataResponse = doGetRequest(
+                getHistoricalInformationURI(encodedCountry, HistoricalDataStatus.CONFIRMED), HistoricalData.class
+        );
+        Covid19APIResponse<VaccineData> vaccineDataResponse = doGetRequest(
+                getVaccineInformationURI(encodedCountry), VaccineData.class
+        );
 
         Covid19Information covid19Information = new Covid19Information(country);
 
@@ -101,12 +114,23 @@ public class Covid19APIClientService {
 
         try {
             HttpResponse<String> response = this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            Covid19APIResponse<T> covid19APIResponse = objectMapper.readValue(response.body(), type);
 
-            // todo check response code
+            int statusCode = response.statusCode();
+            String responseBody = response.body();
+
+            if (statusCode != HTTP_OK) {
+                throw new ExternalServiceException(
+                        request.method(),
+                        request.uri().toString(),
+                        statusCode,
+                        responseBody
+                );
+            }
+
+            Covid19APIResponse<T> covid19APIResponse = objectMapper.readValue(responseBody, type);
             System.out.println(Constants.FETCHING_MESSAGE_END);
             return covid19APIResponse;
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException | ExternalServiceException e) {
             // do not fail the flow if we do not get a response
             System.out.println(Constants.FETCHING_MESSAGE_ERROR + e);
             return null;
