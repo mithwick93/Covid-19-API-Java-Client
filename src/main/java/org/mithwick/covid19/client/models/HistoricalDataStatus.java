@@ -4,7 +4,6 @@ import lombok.Getter;
 
 /**
  * Available statuses for historical data
- *
  */
 @Getter
 public enum HistoricalDataStatus {

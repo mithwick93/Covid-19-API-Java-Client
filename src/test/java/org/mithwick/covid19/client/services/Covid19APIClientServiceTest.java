@@ -28,7 +28,6 @@ import static org.mithwick.covid19.client.test.util.HTTPClientUtil.HISTORICAL_DA
 import static org.mithwick.covid19.client.test.util.HTTPClientUtil.LIVE_DATA_RESPONSE_BODY;
 import static org.mithwick.covid19.client.test.util.HTTPClientUtil.VACCINE_DATA_RESPONSE_BODY;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
 
 class Covid19APIClientServiceTest {
     private final PrintStream standardOut = System.out;
@@ -97,7 +96,7 @@ class Covid19APIClientServiceTest {
         HttpResponse<String> historicalDataResponse = HTTPClientUtil.getMockHttpResponse(statusCode, HISTORICAL_DATA_RESPONSE_BODY);
         HttpResponse<String> vaccineDataResponse = HTTPClientUtil.getMockHttpResponse(statusCode, VACCINE_DATA_RESPONSE_BODY);
 
-        when(mockHttpClient.send(Mockito.any(), eq(HttpResponse.BodyHandlers.ofString())))
+        Mockito.when(mockHttpClient.send(Mockito.any(), eq(HttpResponse.BodyHandlers.ofString())))
                 .thenReturn(liveDataResponse)
                 .thenReturn(historicalDataResponse)
                 .thenReturn(vaccineDataResponse);
@@ -125,7 +124,7 @@ class Covid19APIClientServiceTest {
     public void getCovid19Information_allCallsFailIO_ReturnNoInformation() throws IOException, InterruptedException {
         String country = "France";
 
-        when(mockHttpClient.send(Mockito.any(), eq(HttpResponse.BodyHandlers.ofString())))
+        Mockito.when(mockHttpClient.send(Mockito.any(), eq(HttpResponse.BodyHandlers.ofString())))
                 .thenThrow(new IOException());
 
         Covid19APIClientService covid19APIClientService = new Covid19APIClientService(objectMapper, mockHttpClient);
@@ -146,7 +145,7 @@ class Covid19APIClientServiceTest {
         HttpResponse<String> historicalDataResponse = HTTPClientUtil.getMockHttpResponse(statusCode, FORBIDDEN_ERROR_BODY);
         HttpResponse<String> vaccineDataResponse = HTTPClientUtil.getMockHttpResponse(statusCode, FORBIDDEN_ERROR_BODY);
 
-        when(mockHttpClient.send(Mockito.any(), eq(HttpResponse.BodyHandlers.ofString())))
+        Mockito.when(mockHttpClient.send(Mockito.any(), eq(HttpResponse.BodyHandlers.ofString())))
                 .thenReturn(liveDataResponse)
                 .thenReturn(historicalDataResponse)
                 .thenReturn(vaccineDataResponse);

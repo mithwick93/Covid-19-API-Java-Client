@@ -44,9 +44,7 @@ public class Main {
                     String country = inputProcessor.getCountryName();
                     displayCovidInformation(country, covid19APIClientService);
                 }
-                case INVALID -> {
-                    System.out.println(Constants.INVALID_MAIN_CHOICE_MESSAGE);
-                }
+                case INVALID -> System.out.println(Constants.INVALID_MAIN_CHOICE_MESSAGE);
                 case EXIT -> {
                     System.out.println(Constants.EXIT_PROGRAM_MESSAGE);
                     return;
