@@ -17,8 +17,8 @@ public class Constants {
     public static final String MAIN_CHOICE_2_MESSAGE = "\tPress 0 to exit the program";
     public static final String ENTER_MAIN_CHOICE_MESSAGE = "Please enter your choice: ";
     public static final String ENTER_COUNTRY_MESSAGE = "Please enter ISO 3166-1 alpha-2 compliant country name: ";
-    public static final String INVALID_MAIN_CHOICE_MESSAGE = "Invalid input. Please try again";
-    public static final String INVALID_COUNTRY_MESSAGE = "Invalid Country Name. Please try again";
+    public static final String INVALID_MAIN_CHOICE_MESSAGE = "\tInvalid input. Please try again";
+    public static final String INVALID_COUNTRY_MESSAGE = "\tInvalid Country Name. Please try again";
     public static final String DISPLAY_COUNTRY_INFORMATION = "Displaying Covid-19 Information of ";
     public static final String EXIT_PROGRAM_MESSAGE = "Exiting program.";
 

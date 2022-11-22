@@ -13,33 +13,53 @@ import java.time.Duration;
 import java.util.Scanner;
 
 public class Main {
+    /**
+     * main method would act as the bootstrap. It will create required objects and handover the execution to run method
+     */
     public static void main(String[] args) {
-        System.out.println(Constants.WELCOME_MESSAGE);
-
         Scanner scanner = new Scanner(System.in);
-        ObjectMapper objectMapper = new ObjectMapper()
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         HttpClient httpClient = HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_1_1)
                 .connectTimeout(Duration.ofSeconds(60))
                 .build();
-        Covid19APIClientService covid19APIClientService = new Covid19APIClientService(objectMapper, httpClient);
 
         InputProcessor inputProcessor = new InputProcessor(scanner);
+        Covid19APIClientService covid19APIClientService = new Covid19APIClientService(objectMapper, httpClient);
 
+        Main main = new Main();
+        main.run(inputProcessor, covid19APIClientService);
+    }
+
+    /**
+     * Main entry point to the application
+     */
+    public void run(InputProcessor inputProcessor, Covid19APIClientService covid19APIClientService) {
         inputProcessor.displayMainMenu();
         while (true) {
             InputChoice mainChoice = inputProcessor.getMainMenuUserChoice();
 
-            String country = inputProcessor.getCountryName(mainChoice);
-            displayCovidInformation(country, covid19APIClientService);
+            switch (mainChoice) {
+                case ENTER_COUNTRY_NAME -> {
+                    String country = inputProcessor.getCountryName();
+                    displayCovidInformation(country, covid19APIClientService);
+                }
+                case INVALID -> {
+                    System.out.println(Constants.INVALID_MAIN_CHOICE_MESSAGE);
+                }
+                case EXIT -> {
+                    System.out.println(Constants.EXIT_PROGRAM_MESSAGE);
+                    return;
+                }
 
-            inputProcessor.handleInvalidInput(mainChoice);
-            inputProcessor.handleExit(mainChoice);
+            }
         }
     }
 
-    public static void displayCovidInformation(String country, Covid19APIClientService covid19APIClientService) {
+    /**
+     * Method to execute display Covid information
+     */
+    public void displayCovidInformation(String country, Covid19APIClientService covid19APIClientService) {
         if (country == null) {
             return;
         }

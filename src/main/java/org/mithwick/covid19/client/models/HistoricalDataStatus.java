@@ -2,6 +2,10 @@ package org.mithwick.covid19.client.models;
 
 import lombok.Getter;
 
+/**
+ * Available statuses for historical data
+ *
+ */
 @Getter
 public enum HistoricalDataStatus {
     CONFIRMED("confirmed"), DEATHS("deaths"), RECOVERED("recovered");

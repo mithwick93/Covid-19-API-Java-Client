@@ -30,7 +30,6 @@ This project uses Maven as the build automation tool.
 * project lombok
 * junit 5
 * mockito
-* system-lambda
 
 #### Run the tests
 

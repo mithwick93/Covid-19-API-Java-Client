@@ -34,7 +34,7 @@ class MainTest {
 
         Mockito.when(mockCovid19APIClientService.getCovid19Information(country)).thenReturn(covid19Information);
 
-        Main.displayCovidInformation(country, mockCovid19APIClientService);
+        new Main().displayCovidInformation(country, mockCovid19APIClientService);
 
         Mockito.verify(mockCovid19APIClientService, Mockito.times(1)).getCovid19Information(country);
         Mockito.verify(covid19Information, Mockito.times(1)).prettyPrint();
@@ -45,7 +45,7 @@ class MainTest {
         String country = null;
         Covid19APIClientService mockCovid19APIClientService = Mockito.mock(Covid19APIClientService.class);
 
-        Main.displayCovidInformation(country, mockCovid19APIClientService);
+        new Main().displayCovidInformation(country, mockCovid19APIClientService);
 
         Mockito.verify(mockCovid19APIClientService, Mockito.times(0)).getCovid19Information(country);
     }
@@ -55,7 +55,7 @@ class MainTest {
         String country = "not a country";
         Covid19APIClientService mockCovid19APIClientService = Mockito.mock(Covid19APIClientService.class);
 
-        Main.displayCovidInformation(country, mockCovid19APIClientService);
+        new Main().displayCovidInformation(country, mockCovid19APIClientService);
 
         assertTrue(outputStreamCaptor.toString().trim().contains("Invalid Country Name. Please try again"));
         Mockito.verify(mockCovid19APIClientService, Mockito.times(0)).getCovid19Information(country);

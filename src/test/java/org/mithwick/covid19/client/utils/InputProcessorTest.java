@@ -9,10 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Scanner;
 
-import static com.github.stefanbirkner.systemlambda.SystemLambda.catchSystemExit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class InputProcessorTest {
@@ -35,6 +32,7 @@ class InputProcessorTest {
 
         inputProcessor.displayMainMenu();
 
+        assertTrue(outputStreamCaptor.toString().trim().contains("Welcome to Covid-19-API Java Client"));
         assertTrue(outputStreamCaptor.toString().trim().contains("Press 1 to enter country name"));
         assertTrue(outputStreamCaptor.toString().trim().contains("Press 0 to exit the program"));
     }
@@ -64,10 +62,9 @@ class InputProcessorTest {
     @Test
     public void getCountryName_enterCountryNameChoice_readInput() {
         String expectedInput = "Sri Lanka";
-        InputChoice choice = InputChoice.ENTER_COUNTRY_NAME;
         InputProcessor inputProcessor = new InputProcessor(new Scanner(expectedInput));
 
-        String countryName = inputProcessor.getCountryName(choice);
+        String countryName = inputProcessor.getCountryName();
 
         assertTrue(outputStreamCaptor.toString().trim().contains("Please enter ISO 3166-1 alpha-2 compliant country name:"));
         assertEquals(expectedInput, countryName);
@@ -77,65 +74,11 @@ class InputProcessorTest {
     public void getCountryName_enterCountryNameChoice_readInputTrimmed() {
         String input = "  Sri Lanka  ";
         String expectedOutput = input.trim();
-        InputChoice choice = InputChoice.ENTER_COUNTRY_NAME;
         InputProcessor inputProcessor = new InputProcessor(new Scanner(input));
 
-        String countryName = inputProcessor.getCountryName(choice);
+        String countryName = inputProcessor.getCountryName();
 
         assertTrue(outputStreamCaptor.toString().trim().contains("Please enter ISO 3166-1 alpha-2 compliant country name:"));
         assertEquals(expectedOutput, countryName);
-    }
-
-    @Test
-    public void getCountryName_exitChoice_doNotReadInput() {
-        InputChoice choice = InputChoice.EXIT;
-        InputProcessor inputProcessor = new InputProcessor(new Scanner(System.in));
-
-        String countryName = inputProcessor.getCountryName(choice);
-
-        assertFalse(outputStreamCaptor.toString().trim().contains("Please enter ISO 3166-1 alpha-2 compliant country name:"));
-        assertNull(countryName);
-    }
-
-    @Test
-    public void handleInvalidInput_invalidChoice_printMessage() {
-        InputProcessor inputProcessor = new InputProcessor(new Scanner(System.in));
-
-        inputProcessor.handleInvalidInput(InputChoice.INVALID);
-
-        assertTrue(outputStreamCaptor.toString().trim().contains("Invalid input. Please try again"));
-    }
-
-    @Test
-    public void handleInvalidInput_validChoice_noMessage() {
-        InputChoice choice = InputChoice.ENTER_COUNTRY_NAME;
-        InputProcessor inputProcessor = new InputProcessor(new Scanner(System.in));
-
-        inputProcessor.handleInvalidInput(choice);
-
-        assertFalse(outputStreamCaptor.toString().trim().contains("Press 1 to enter country name"));
-    }
-
-    @Test
-    public void handleExit_exitChoice_printMessage() throws Exception {
-        InputChoice choice = InputChoice.EXIT;
-        int statusCode = catchSystemExit(() -> {
-            InputProcessor inputProcessor = new InputProcessor(new Scanner(System.in));
-
-            inputProcessor.handleExit(choice);
-        });
-
-        assertTrue(outputStreamCaptor.toString().trim().contains("Exiting program."));
-        assertEquals(0, statusCode);
-    }
-
-    @Test
-    public void handleExit_validChoice_noMessage() {
-        InputChoice choice = InputChoice.ENTER_COUNTRY_NAME;
-        InputProcessor inputProcessor = new InputProcessor(new Scanner(System.in));
-
-        inputProcessor.handleExit(choice);
-
-        assertFalse(outputStreamCaptor.toString().trim().contains("Exiting program."));
     }
 }

@@ -11,6 +11,7 @@ public class InputProcessor {
     private final Scanner scanner;
 
     public void displayMainMenu() {
+        System.out.println(Constants.WELCOME_MESSAGE);
         System.out.println(Constants.MAIN_CHOICE_1_MESSAGE);
         System.out.println(Constants.MAIN_CHOICE_2_MESSAGE);
     }
@@ -23,29 +24,13 @@ public class InputProcessor {
             int mainChoice = Integer.parseInt(input);
             return InputChoice.getInputChoice(mainChoice);
         } catch (NumberFormatException ignored) {
+            // we return invalid input choice if the user input cannot be converted to an int
         }
         return InputChoice.INVALID;
     }
 
-    public String getCountryName(InputChoice choice) {
-        if (!InputChoice.ENTER_COUNTRY_NAME.equals(choice)) {
-            return null;
-        }
-
+    public String getCountryName() {
         System.out.print(Constants.ENTER_COUNTRY_MESSAGE);
         return scanner.nextLine().trim();
-    }
-
-    public void handleInvalidInput(InputChoice choice) {
-        if (InputChoice.INVALID.equals(choice)) {
-            System.out.println(Constants.INVALID_MAIN_CHOICE_MESSAGE);
-        }
-    }
-
-    public void handleExit(InputChoice choice) {
-        if (InputChoice.EXIT.equals(choice)) {
-            System.out.println(Constants.EXIT_PROGRAM_MESSAGE);
-            System.exit(0);
-        }
     }
 }
